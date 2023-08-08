@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; 
 import { Link, useNavigate } from 'react-router-dom';
+import { Container, Button, TextField, Typography, Paper, Grid, Select, MenuItem, TextareaAutosize, IconButton } from '@mui/material';
+import { ThumbUp, ThumbDown } from '@mui/icons-material';
 
 function Home() {
     const [title, setTitle] = useState(''); 
@@ -101,8 +103,8 @@ function Home() {
             });     
     }
 
-    return (//single tag elements in jsx need to be enclosed (e.g. <br> = <br />)
-        <div>
+    return (
+        <Container maxWidth="md">
             <h1>Home Page</h1>
             <div>
                 <Link to='/profile'>My Profile</Link><br />
@@ -110,9 +112,6 @@ function Home() {
                 {!showForm && <button onClick={() => setShowForm(true)}>New Post</button>}
             </div>
             {showForm && ( 
-                //ANOTHER OPTION WOULD BE (setting the elements up so you can do {<condition> ? <when true> : <when false>})
-                //any js expression can be put into {} BUT NOT statements (directly) 
-                //- can use work around though like '(() => { if(cond) { return <div>Wow</div> } else { return <div>not wow</div> } })'
                 <>
                     <form onSubmit={handleReviewPost}> 
                         <div>
@@ -162,7 +161,7 @@ function Home() {
                             />
                         </div>
                         <div>
-                            <button type="submit">Post Review</button>
+                            <Button type="submit">Post Review</Button>
                         </div>
                     </form>
                     <div>
@@ -190,7 +189,7 @@ function Home() {
                     </div> 
                 ))}
             </div> 
-        </div>
+        </Container>
     );
 }
 

@@ -8,7 +8,7 @@ function Profile() {
     const [feed, setFeed] = useState ([]); 
 
 
-    useEffect(() => { //I believe this statement just allows it to load automatically on arrival
+    useEffect(() => {
         if (isLikes){
             handleLikes(); 
         }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'; 
+import { Container, Button, TextField, Typography, Paper, AppBar, Toolbar, Grid, Select, MenuItem, TextareaAutosize, IconButton } from '@mui/material';
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -17,7 +18,6 @@ function Login() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // Make a POST request to backend to handle login
         const data = {
             username: username,
             password: password,
@@ -25,7 +25,7 @@ function Login() {
         
         axios.post('/auth/login', data)
             .then((response) => {
-                console.log(response.data); // This will show the response data from the server
+                console.log(response.data);
                 navigate('/home'); 
             })
             .catch((error) => {
@@ -33,36 +33,57 @@ function Login() {
             });
     };
 
-  return (
-    <div>
-        <h1>Login</h1>
-            <form onSubmit={handleLogin}>
-                <div>
-                    <label htmlFor="username">Username:</label>
-                    <input
-                        type="text"
-                        id="username"
-                        value={username} // value is the hooks variable
-                        onChange={handleUsernameChange} //on change, use the function that updates hook variable
+    return (
+        <Container component ="login" maxWidth ="xs">
+            <AppBar position = 'static'>
+                <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <IconButton edge="start" color="inherit" aria-label="menu">
+                        <MenuItem />
+                    </IconButton>
+                    <Typography 
+                        variant='h3' 
+                        component="div" 
+                        style={{
+                            position: 'absolute', 
+                            left: '50%', 
+                            transform:'translateX(-50%)',
+                            marginTop:'20px',
+                            fontWeight:' bold'
+                    }}>
+                        Login!
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <Paper elevation={3} style={{padding: '20px'}}> 
+                <form onSubmit={handleLogin}>
+                    <TextField 
+                        label="Username" 
+                        value={username} 
+                        onChange={handleUsernameChange} 
+                        margin="normal" 
+                        variant="outlined" 
+                        fullWidth 
                     />
-                </div>
-                <div>
-                    <label htmlFor="password">Password:</label>
-                    <input
+                    <TextField 
                         type="password"
-                        id="password"
+                        label="Password" 
                         value={password}
                         onChange={handlePasswordChange}
+                        variant='outlined'
+                        fullWidth
                     />
-                </div>
-                <div>
-                    <button type="submit">Login</button>
-                </div>
-            </form>
-            <p>
-                Don't have an account? <Link to="/signup">Signup Instead</Link>
-            </p>
-        </div>
+                    <Button type="submit" variant="contained" style={{ marginTop:'10px', display:'flex', marginLeft:'auto', marginRight:'auto'}}>
+                        Post Review
+                    </Button>
+                </form>
+                <Typography variant='body2' style={{ display:'flex' , justifyContent:'center', marginTop:'20px'}}>
+                    Don't have an account? 
+                    <Link href="/signup" style={{marginLeft:'5px'}}>
+                        Signup Now!
+                    </Link>
+                </Typography>
+            </Paper> 
+        </Container>
     );
 }
 

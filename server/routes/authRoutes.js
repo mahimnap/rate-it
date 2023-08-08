@@ -6,7 +6,8 @@ const isLoggedIn = require('../helpers/isLoggedIn');
 const pool = require('../config/dbConfig'); 
 
 router.post('/login', (req, res) => {
-    const { username, password } = req.body; 
+    const { username, password } = req.body;
+    console.log (username + ' <--> ' + password);  
     const sql = 'SELECT * FROM users WHERE username = ?';
     const inserts = [username]; 
     const query = mysql.format(sql, inserts); 
@@ -38,6 +39,15 @@ router.post('/login', (req, res) => {
 router.post('/signup', (req, res) => {
     const { username, password, confirmPassword } = req.body; 
 
+    if (!username || !password || username.trim() === '' || password.trim() === '') {
+        const errorResponse = {
+            error: true, 
+            message: "Username and password cannot be blank", 
+        }; 
+        return res.status(400).send(errorResponse);
+    }
+    
+
     if (password !== confirmPassword) {
         const errorResponse = {
             error: true, 
@@ -68,6 +78,10 @@ router.post('/signup', (req, res) => {
             });
         }
     });
+});
+
+router.get('/is-logged-in', isLoggedIn, (req,res) =>{
+    return res.status(200).send('user is logged in'); 
 });
 
 router.get('/logout', isLoggedIn, (req, res) => {

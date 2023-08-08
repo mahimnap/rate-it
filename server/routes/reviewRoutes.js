@@ -108,10 +108,8 @@ router.get('/retrieve-reviews', isLoggedIn, (req, res) => {
                     console.error('Error fetching likes:', err);
                     return res.status(500).send('Error fetching likes');
                 } else {
-                    // Convert the array of liked review IDs into a set for faster lookup
+                    //convert the array of liked review IDs into a set for faster lookup
                     const likedReviewIds = new Set(likeResults.map(result => result.review_id));
-
-                    // Add a 'liked' property to each review indicating whether the user has liked it
                     const reviews = reviewResults.map(review => ({
                         ...review, //adds each review
                         liked: likedReviewIds.has(review.id), //sets boolean liked value
