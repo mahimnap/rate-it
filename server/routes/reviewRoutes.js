@@ -3,6 +3,32 @@ const router = express.Router();
 const mysql = require('mysql2');
 const isLoggedIn = require('../helpers/isLoggedIn'); 
 const pool = require('../config/dbConfig'); 
+const cors = require('cors');
+
+router.use(cors()); 
+
+let clients = [];
+
+const sendEvents = (data) => {
+    clients.forEach(client => 
+        client.write(`data: ${JSON.stringify(data)}\n\n`)
+    );
+};
+
+router.get('/events', isLoggedIn, (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Add this line
+    res.setHeader('Access-Control-Allow-Credentials', 'true'); // And this line
+    res.flushHeaders();
+
+    clients.push(res);
+
+    req.on('close', () => {
+        clients = clients.filter(client => client !== res);
+    });
+});
 
 router.post('/post-review', isLoggedIn, (req, res) => {
     const {title, media, review, rating} = req.body; 
@@ -15,8 +41,26 @@ router.post('/post-review', isLoggedIn, (req, res) => {
             console.error('Error inserting review into database.', err); 
             return res.status(500).send('Error posting the review'); 
         } else {
-            console.log (result); 
-            return res.status(200).send('Review successfully posted.'); 
+            // Fetch the details of the newly inserted review
+            const fetchReviewSql = `
+                SELECT users.username, reviews.id, reviews.title, reviews.media, reviews.rating, reviews.review, reviews.like_count
+                FROM reviews
+                JOIN users ON reviews.user_id = users.id
+                WHERE reviews.id = ?
+            `;
+            pool.query(fetchReviewSql, [result.insertId], (err, reviewDetails) => {
+                if (err) {
+                    console.error('Error fetching the newly inserted review:', err);
+                    return res.status(500).send('Error fetching the new review');
+                } else {
+                    const newReview = {
+                        ...reviewDetails[0],
+                        liked: false //new review, so false by default
+                    };
+                    sendEvents({type: 'NEW_REVIEW', review: newReview});
+                    return res.status(200).send('Review successfully posted.');
+                }
+            });
         }
     }); 
 });

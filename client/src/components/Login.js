@@ -78,7 +78,7 @@ function Login() {
                 </form>
                 <Typography variant='body2' style={{ display:'flex' , justifyContent:'center', marginTop:'20px'}}>
                     Don't have an account? 
-                    <Link href="/signup" style={{marginLeft:'5px'}}>
+                    <Link to="/signup" style={{marginLeft:'5px'}}>
                         Signup Now!
                     </Link>
                 </Typography>

@@ -13,10 +13,52 @@ function Home() {
     const [showForm, setShowForm] = useState(false); 
     const navigate = useNavigate(); 
 
+    /**
+     * SSE that listens for a new post on the server and 
+     * notifies users immidiately when a post is submitted .
+     * Unlike fetchDataReviews, this fetches just the newest
+     * review and appends that to the list
+     * which was not possible with fetchReviews 
+     * - i.e. significantly more efficient and 
+     *      gives the website a live social feed
+     */
+    useEffect (() => {
+        const eventSource = new EventSource('/review/events'); 
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data); 
+            if (data.type === 'NEW_REVIEW') {
+                setReviews(prevReviews => [data.review, ...prevReviews]);
+            }
+        };
+        return () => {
+            eventSource.close(); 
+        };
+
+    }, []); 
+
+    /**
+     * While fetchReviews() is less efficient 
+     * than the eventSource SSE implementation
+     * due to it pulling the whole table of reviews,
+     * it is needed on page load until 
+     * caching is implemented because the SSE 
+     * only listens for the latest update 
+     * in the listings
+     */
+
     useEffect (() => {
         fetchReviews(); 
     }, []); 
 
+    /**
+     * Unlike SSE above, this just refreshes 
+     * review feed for those that trigger it
+     * to allow them to interact with the website 
+     * (e.g. like a post and see the like immidiately) 
+     * Both this and a SSE were done because an SSE
+     * is only necessary when there is new content 
+     * availble. 
+     */
     const fetchReviews = () => {
         axios.get('/review/retrieve-reviews')
             .then((response) => {
@@ -47,6 +89,12 @@ function Home() {
         setReview(''); 
     }
 
+    /**
+     * if successful, will result in a review
+     * being posted and all users on the network's 
+     * feed being updated thanks to the
+     * SSE 
+     */
     const handleReviewPost = (e) => {
         e.preventDefault(); 
         const data = {
@@ -58,7 +106,6 @@ function Home() {
         axios.post('/review/post-review', data)
             .then((response) => {
                 console.log(response.data); 
-                fetchReviews(); 
                 setShowForm(false); 
                 clearForm(); 
             })
@@ -78,13 +125,16 @@ function Home() {
         }); 
     };
 
+    /**
+     * add like to post and update reviews 
+     * JUST for the user that triggered it
+     */
     const handleLike = (review_id) => {
         const data = {
             review_id: review_id
         }
         axios.post('/like/like-review', data)
             .then((response) => {
-                console.log(response.data); 
                 fetchReviews(); 
             })
             .catch((error) => {
@@ -92,6 +142,10 @@ function Home() {
             });
     };
 
+    /**
+     * remove a like from a post and update reviews 
+     * JUST for the user that triggered it
+     */
     const handleUnlike = (review_id) => {
         axios.delete('/like/unlike-review', { params: { review_id: review_id} })
             .then((response) => {
