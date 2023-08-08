@@ -50,7 +50,19 @@ function Login() {
                             marginTop:'20px',
                             fontWeight:' bold'
                     }}>
-                        Login!
+                        Rate It
+                    </Typography>
+                    <Typography 
+                        variant='p' 
+                        component="div" 
+                        style={{
+                            position: 'absolute', 
+                            left: '50%',
+                            transform:'translateX(-50%)',
+                            top: '70px', 
+                            fontWeight:' bold'
+                    }}>
+                        Login
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -73,7 +85,7 @@ function Login() {
                         fullWidth
                     />
                     <Button type="submit" variant="contained" style={{ marginTop:'10px', display:'flex', marginLeft:'auto', marginRight:'auto'}}>
-                        Post Review
+                        Login
                     </Button>
                 </form>
                 <Typography variant='body2' style={{ display:'flex' , justifyContent:'center', marginTop:'20px'}}>

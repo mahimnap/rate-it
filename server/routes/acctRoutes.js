@@ -30,6 +30,18 @@ router.delete('/delete-account', isLoggedIn, (req, res) => {
     }); 
 });
 
+//can be upgraded to 'getprofileinfo' or something later
+router.get('/username', (req,res) => {
+    const username = req.session.username; 
+    console.log('Get username found' + ' ' + username); 
+    if (username.length > 0) {
+        console.log('Successfully found and returned username: ' + username); 
+        return res.status(200).send(username); 
+    }
+    else {
+        return res.status(500).send("username isn't currently registered in session.");
+    }
+});
 
 
 module.exports = router; 

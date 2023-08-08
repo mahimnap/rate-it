@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; 
 import { Link, useNavigate } from 'react-router-dom';
-import { Container, Button, TextField, Typography, Paper, Grid, Select, MenuItem, TextareaAutosize, IconButton } from '@mui/material';
-import { ThumbUp, ThumbDown } from '@mui/icons-material';
+import { ThumbUp, ThumbDown, ExpandMore } from '@mui/icons-material'; //look for filled and empty hearts in icons-material
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useTheme } from '@mui/material/styles';
+import Avatar from '@mui/material/Avatar';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'; 
+import { Container, Button, Card, CardActions, CardHeader, IconButton, CardContent, TextField, Typography,
+        Paper, ListItem, Select, MenuItem, TextareaAutosize, Collapse, Menu, AppBar, Toolbar, 
+        Grid, Box } from '@mui/material';
 
 function Home() {
     const [title, setTitle] = useState(''); 
@@ -12,6 +19,8 @@ function Home() {
     const [reviews, setReviews] = useState([]); 
     const [showForm, setShowForm] = useState(false); 
     const navigate = useNavigate(); 
+    const [username, setUsername] = useState(''); 
+    const theme = useTheme(); 
 
     /**
      * SSE that listens for a new post on the server and 
@@ -48,6 +57,7 @@ function Home() {
 
     useEffect (() => {
         fetchReviews(); 
+        handleUsername();
     }, []); 
 
     /**
@@ -80,6 +90,17 @@ function Home() {
     };
     const handleReviewChange = (e) => {
         setReview(e.target.value); 
+    }
+
+    const handleUsername = () => {
+        axios.get('/acct/username')
+            .then ((response) => {
+                console.log(response.data); 
+                setUsername(response.data); 
+            })
+            .catch((error) => {
+                console.log(error); 
+            });
     }
 
     const clearForm = () => {
@@ -146,6 +167,7 @@ function Home() {
 
         axios.post('/like/like-review', data)
             .then((response) => {
+                fetchReviews();
                 console.log(response.data); 
             })
             .catch((error) => {
@@ -171,6 +193,7 @@ function Home() {
 
         axios.delete('/like/unlike-review', { params: { review_id: review_id} })
             .then((response) => {
+                fetchReviews();
                 console.log(response.data); 
             }) 
             .catch((error) => {
@@ -178,94 +201,188 @@ function Home() {
             });     
     }
 
+    const [anchorEl, setAnchorEl] = useState(null); 
+    const handleMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget); 
+    };
+    const handleMenuClose = () => {
+        setAnchorEl(null); 
+    };
+
+    const [expandedCard, setExpandedCard] = useState(null); 
+
+    const handleExpandClick = (index) => {
+        if (expandedCard === index) {
+            setExpandedCard(null); 
+        }
+        else {
+            setExpandedCard(index); 
+        }
+    };
+
     return (
-        <Container maxWidth="md">
-            <h1>Home Page</h1>
-            <div>
-                <Link to='/profile'>My Profile</Link><br />
-                <button onClick={handleLogout}>Logout</button>  
-                {!showForm && <button onClick={() => setShowForm(true)}>New Post</button>}
-            </div>
-            {showForm && ( 
-                <>
-                    <form onSubmit={handleReviewPost}> 
-                        <div>
-                            <label htmlFor="title">Title:</label>
-                            <input 
-                                type="text" 
-                                id="title" 
-                                required={true} 
+        <div>
+            <AppBar position = "static">
+                <Toolbar>
+                    <Typography variant='h6' style={{flexGrow: 1}}>
+                        Rate It
+                    </Typography>
+                    <Typography
+                        variant="body1"
+                        style={{cursor: 'pointer'}}
+                        onClick={handleMenuOpen} 
+                    >
+                        {username}
+                    </Typography>
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose} 
+                    >
+                        <ListItem button component={Link} to="/profile">
+                            My Profile
+                        </ListItem>
+                        <ListItem button onClick={handleLogout}>
+                            Logout
+                        </ListItem>
+                    </Menu>
+                </Toolbar>
+            </AppBar>
+            <Container maxWidth="sm" style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary, marginTop: '20px'}}>
+                <Paper
+                    elevation={3} 
+                    style={{
+                        padding :'10px', 
+                        marginBottom: '20px', 
+                        cursor: 'pointer', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                    }} 
+                    onClick={ () => setShowForm((prev) => !prev)}
+                >
+                    <div style={{textAlign: 'center'}}>
+                        <Typography fontWeight="bold" variant="body1">New Post</Typography>
+                    </div>
+                    <div>
+                        <ExpandMoreIcon />  
+                    </div>
+                </Paper>
+                    <Collapse in={showForm}>
+                        <form onSubmit={handleReviewPost}>
+                            <TextField
+                                fullWidth 
+                                label="Title"
+                                id = "title" 
                                 value={title}
                                 onChange={handleTitleChange}
                             />
-                        </div>
-                        <div>
-                            <label htmlFor="media">Media:</label>
-                            <select
-                                id="media"
-                                required={true}
+                            <Select
+                                fullWidth 
                                 value={media}
+                                id="media"
                                 onChange={handleMediaChange}
+                                displayEmpty
                             >
-                                <option value="">Select...</option>
-                                <option value="Movie">Movie</option>
-                                <option value="TV Show">TV Show</option>
-                                <option value="Music">Music</option>
-                                <option value="Book">Book</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label htmlFor="rating">Rating:</label>
-                            <input 
-                                type="number" 
-                                min="1" 
-                                max="10" 
-                                step="1" 
-                                required={true} 
+                                <MenuItem value="">
+                                    <em>Select Media Type</em>
+                                </MenuItem>
+                                <MenuItem value="Movie">Movie</MenuItem>
+                                <MenuItem value="TV Show">TV Show</MenuItem>
+                                <MenuItem value="Music">Music</MenuItem>
+                                <MenuItem value="Book">Book</MenuItem>
+                            </Select>
+                            <TextField
+                                fullWidth
+                                type="number"
+                                label="Rating"
+                                id="rating" 
                                 value={rating}
                                 onChange={handleRatingChange}
                             />
-
-                        </div>
-                        <div>
-                            <label htmlFor="review">Review:</label>
-                            <textarea 
-                                maxLength="1000" 
-                                required={true}
-                                onChange={handleReviewChange} 
+                            <TextareaAutosize
+                                fullWidth
+                                rowsMin={3}
+                                id="review" 
+                                placeholder="Write your review here..."
+                                value={review} 
+                                onChange={handleReviewChange}
                             />
-                        </div>
-                        <div>
-                            <Button type="submit">Post Review</Button>
-                        </div>
-                    </form>
-                    <div>
-                        <button onClick={() => {
-                            setShowForm(false);
-                            clearForm(); 
-                        }}>Cancel</button>
-                    </div>
-                </>
-            )}
-            <div> 
-                <button onClick={fetchReviews}>Refresh Reviews</button>
-                {reviews.map((review, index) => (
-                    <div key={index}>
-                        <h2>Title: {review.title}</h2>
-                        <p>
-                            <b>Username: </b>{review.username}<br />
-                            <b>Media-Type: </b>{review.media}<br />
-                            <b>Rating: </b>{review.rating}/10<br />
-                            <b>Review: </b>{review.review}<br />
-                            <b>Like Count: </b>{review.like_count}<br />
-                            {review.liked ? <button onClick={() => handleUnlike(review.id)}>Unlike</button> : 
-                            <button onClick={() => handleLike(review.id)}>Like</button>}
-                        </p>
-                    </div> 
-                ))}
-            </div> 
-        </Container>
-    );
-}
+                            <Button type="submit" fullWidth variant="contained" style={{marginTop: '10px', padding: '10px'}}>
+                                Post Review
+                            </Button>
+                        </form>
+                    </Collapse>
 
+                    {reviews.map((review, index) => (
+                        <Card key={index} elevation={3} style={{margin: '10px 0' }}>
+                            <Box display="flex" flexDirection="column">
+
+                                <Box display="flex" flexDirection="column" alignItems="center">
+                                    <Avatar
+                                        src="https://at-cdn-s01.audiotool.com/2012/12/19/users/tyreeg64/avatar256x256-ada09af3501e4763a8d3207a744453b3.jpg"
+                                        alt="Default Profile"
+                                    />
+                                    <Typography variant="body2" style={{ marginTop: '5px', fontSize: '0.8rem' }}>
+                                        {'@' + review.username}
+                                    </Typography>
+                                </Box>
+
+                                {/*added for spacing between avatar+user and title+rating+media boxes*/}
+                                <Box style={{ height: '10px' }}></Box>
+
+                                <Box display="flex" flexDirection="column" alignItems="center">
+                                    <Typography variant="h6" align="center" style={{ fontWeight: 'bold' }}>
+                                        {review.title}
+                                    </Typography>
+                                    <Typography variant="body2" align="center" style={{fontWeight: 'bold' }}>
+                                        Content: {review.media}
+                                    </Typography>
+                                    <Typography variant="body2" align="center" style={{ fontWeight: 'bold' }}>
+                                        User Rating: {review.rating}/10
+                                    </Typography>
+                                </Box>
+                            </Box>
+                            <Collapse in={expandedCard === index} timeout="auto" unmountOnExit>
+                                <CardContent>
+                                    <TextareaAutosize
+                                        fullWidth 
+                                        rowMin={3}
+                                        placeholder="Write your review here..."
+                                        value={review.review}
+                                        style={{width:'100%'}}
+                                        color='' 
+                                        readOnly
+                                    />
+                                </CardContent>
+                            </Collapse>
+                            <CardContent>
+                                <IconButton
+                                    onClick={() => handleExpandClick(index)}
+                                    aria-expanded={expandedCard === index} 
+                                    aria-label="show more" 
+                                >
+                                        <ExpandMoreIcon />
+                                </IconButton>
+                            </CardContent>
+                            <CardActions>
+                                <Box display="flex" alignItems="center">
+                                    {review.liked ? 
+                                        <IconButton onClick={() => handleUnlike(review.id)}>
+                                            <FavoriteIcon color="error" />
+                                        </IconButton> : 
+                                        <IconButton onClick={() => handleLike (review.id)}>
+                                            <FavoriteBorderIcon color="error" />
+                                        </IconButton>
+                                    }
+                                    <Typography>{review.like_count}</Typography>
+                                </Box>
+                            </CardActions>
+                        </Card>
+                    ))}
+                </Container>
+            </div>
+        );
+    }            
 export default Home;

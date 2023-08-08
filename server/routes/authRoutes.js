@@ -7,7 +7,6 @@ const pool = require('../config/dbConfig');
 
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
-    console.log (username + ' <--> ' + password);  
     const sql = 'SELECT * FROM users WHERE username = ?';
     const inserts = [username]; 
     const query = mysql.format(sql, inserts); 

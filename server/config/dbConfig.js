@@ -6,7 +6,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: process.env.MYSQL_PWD,
-    database: 'notepal',
+    database: 'rateit',
 });
 
 module.exports = pool; 

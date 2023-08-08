@@ -1,2 +1,2 @@
-CREATE DATABASE notepal;
-USE notepal;
+CREATE DATABASE rateit;
+USE rateit;

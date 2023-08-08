@@ -20,6 +20,9 @@ function App() {
             palette: {
                 mode: prefersDarkMode ? 'dark' : 'light',
             },
+            typography: {
+                fontFamily: 'Poppins, sans-serif', 
+            },
         }),
         [prefersDarkMode],
     );
