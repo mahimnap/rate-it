@@ -1,6 +1,6 @@
 # Rate-It
 
-Description: a social media app based on reviewing various mediums of entertainment including books, movies, music and tv shows. 
+A social media app based on reviewing various mediums of entertainment including books, movies, music and tv shows. 
 
 ## Table of Contents
 
@@ -38,7 +38,7 @@ node server.js
 - Account that holds reviews 
 - Social media aspects allowing users to like each others posts
 - Primarily focused on backend thus far, so very basic frontend at the moment. 
-- ...
+- More account features and significant modifications to UI design to come! 
 
 ## Contributing
 
