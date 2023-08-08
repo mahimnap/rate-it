@@ -126,16 +126,27 @@ function Home() {
     };
 
     /**
-     * add like to post and update reviews 
-     * JUST for the user that triggered it
+     * add like to post on local render 
+     * and store the like event in the database 
      */
     const handleLike = (review_id) => {
         const data = {
             review_id: review_id
         }
+        setReviews(prevReviews => {
+            const updatedReviews = [...prevReviews];
+            const reviewIndex = updatedReviews.findIndex(review => review.id === review_id);
+
+            if (reviewIndex !== -1) {
+                updatedReviews[reviewIndex].like_count += 1;  // Corrected this line
+                updatedReviews[reviewIndex].liked = true;
+            }
+            return updatedReviews;
+        });
+
         axios.post('/like/like-review', data)
             .then((response) => {
-                fetchReviews(); 
+                console.log(response.data); 
             })
             .catch((error) => {
                 console.error(error); 
@@ -143,14 +154,24 @@ function Home() {
     };
 
     /**
-     * remove a like from a post and update reviews 
-     * JUST for the user that triggered it
+     * add like to post on local render 
+     * and store the like event in the database 
      */
     const handleUnlike = (review_id) => {
+        setReviews(prevReviews => {
+            const updatedReviews = [...prevReviews];
+            const reviewIndex = updatedReviews.findIndex(review => review.id === review_id);
+
+            if (reviewIndex !== -1) {
+                updatedReviews[reviewIndex].like_count -= 1;  // Corrected this line
+                updatedReviews[reviewIndex].liked = false;
+            }
+            return updatedReviews;
+        });
+
         axios.delete('/like/unlike-review', { params: { review_id: review_id} })
             .then((response) => {
                 console.log(response.data); 
-                fetchReviews(); 
             }) 
             .catch((error) => {
                 console.error(error); 

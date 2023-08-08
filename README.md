@@ -40,12 +40,6 @@ node server.js
 - Primarily focused on backend thus far, so very basic frontend at the moment. 
 - More account features and significant modifications to UI design to come! 
 
-## Contributing
+## Improvements Thus Far
 
-Steps or guidelines for people who want to contribute to the project.
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/YourFeatureName`).
-3. Commit your changes (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/YourFeatureName`).
-5. Open a pull request.
+## Design Trade-Offs
