@@ -1,5 +1,3 @@
-/* JUST FOR DOCUMENTATION. SETUP TERMINAL */ 
-
 CREATE TABLE reviews(
     id INT AUTO_INCREMENT PRIMARY KEY, /*unique review identifier*/
     user_id INT NOT NULL, /*user that made the review*/ 

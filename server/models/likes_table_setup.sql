@@ -1,5 +1,3 @@
-/* JUST FOR DOCUMENTATION. SETUP TERMINAL */ 
-
 CREATE TABLE likes ( /*each row represents an individual like*/ 
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL, /*user that liked the review*/
