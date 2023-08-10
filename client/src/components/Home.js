@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; 
 import { Link, useNavigate } from 'react-router-dom';
-import { ThumbUp, ThumbDown, ExpandMore } from '@mui/icons-material'; //look for filled and empty hearts in icons-material
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'; 
 import { Container, Button, Card, CardActions, CardHeader, IconButton, CardContent, TextField, Typography,
-        Paper, ListItem, Select, MenuItem, TextareaAutosize, Collapse, Menu, AppBar, Toolbar, 
-        Grid, Box } from '@mui/material';
+        Paper, ListItem, Select, MenuItem, TextareaAutosize, Collapse, Menu, AppBar, Toolbar, FormControl,
+        InputLabel, Grid, Box } from '@mui/material';
 
 function Home() {
     const [title, setTitle] = useState(''); 
@@ -201,12 +200,17 @@ function Home() {
             });     
     }
 
+    //
     const [anchorEl, setAnchorEl] = useState(null); 
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget); 
     };
     const handleMenuClose = () => {
         setAnchorEl(null); 
+    };
+
+    const rotatedPostIcon = {
+        transform: showForm ? 'rotate(180deg)' : 'none',
     };
 
     const [expandedCard, setExpandedCard] = useState(null); 
@@ -266,7 +270,7 @@ function Home() {
                         <Typography fontWeight="bold" variant="body1">New Post</Typography>
                     </div>
                     <div>
-                        <ExpandMoreIcon />  
+                        <ExpandMoreIcon style={rotatedPostIcon} />  
                     </div>
                 </Paper>
                     <Collapse in={showForm}>
@@ -293,14 +297,15 @@ function Home() {
                                 <MenuItem value="Music">Music</MenuItem>
                                 <MenuItem value="Book">Book</MenuItem>
                             </Select>
-                            <TextField
-                                fullWidth
-                                type="number"
-                                label="Rating"
-                                id="rating" 
-                                value={rating}
-                                onChange={handleRatingChange}
-                            />
+                            <FormControl fullWidth>
+                                <InputLabel htmlFor="rating">Rating</InputLabel>
+                                <TextField
+                                    type="number"
+                                    id="rating" 
+                                    value={rating}
+                                    onChange={handleRatingChange}
+                                />
+                            </FormControl>
                             <TextareaAutosize
                                 fullWidth
                                 rowsMin={3}
@@ -308,6 +313,12 @@ function Home() {
                                 placeholder="Write your review here..."
                                 value={review} 
                                 onChange={handleReviewChange}
+                                style={{
+                                    width: '100%',
+                                    backgroundColor: theme.palette.background.default,
+                                    color: theme.palette.text.primary,
+                                    borderColor: theme.palette.divider
+                                }}
                             />
                             <Button type="submit" fullWidth variant="contained" style={{marginTop: '10px', padding: '10px'}}>
                                 Post Review
@@ -351,19 +362,29 @@ function Home() {
                                         rowMin={3}
                                         placeholder="Write your review here..."
                                         value={review.review}
-                                        style={{width:'100%'}}
                                         color='' 
                                         readOnly
+                                        style={{
+                                            width:'100%',
+                                            backgroundColor: theme.palette.background.default,
+                                            color: theme.palette.text.primary,
+                                            borderColor: theme.palette.divider
+                                        }}
                                     />
                                 </CardContent>
                             </Collapse>
                             <CardContent>
                                 <IconButton
-                                    onClick={() => handleExpandClick(index)}
+                                    //index passed via map 
+                                    onClick={() => handleExpandClick(index)} 
                                     aria-expanded={expandedCard === index} 
                                     aria-label="show more" 
                                 >
-                                        <ExpandMoreIcon />
+                                    <ExpandMoreIcon 
+                                        //adding style prop check to see if the associated card was open
+                                        //i.e. if the expandedCard hook's set index = this button's associated index
+                                        style={{ transform : expandedCard === index ? 'rotate(180deg)' : 'none'}}
+                                    />
                                 </IconButton>
                             </CardContent>
                             <CardActions>
