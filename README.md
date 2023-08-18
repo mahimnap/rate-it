@@ -30,6 +30,8 @@ npm install;
 npm run build;
 cd ../server;
 <create .env and set mysql password and session secret (MYSQL_PWD and SESSION_SECRET)>
+<ensure server is running - e.g. locally hosted community server: Start-Service -Name [server name]> 
+npm install; 
 node server.js
 '''
 
