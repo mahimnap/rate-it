@@ -266,12 +266,12 @@ function Home() {
                     }} 
                     onClick={ () => setShowForm((prev) => !prev)}
                 >
-                    <div style={{textAlign: 'center'}}>
+                    <Box textAlign="center">
                         <Typography fontWeight="bold" variant="body1">New Post</Typography>
-                    </div>
-                    <div>
+                    </Box>
+                    <Box>
                         <ExpandMoreIcon style={rotatedPostIcon} />  
-                    </div>
+                    </Box>
                 </Paper>
                     <Collapse in={showForm}>
                         <form onSubmit={handleReviewPost}>
@@ -348,10 +348,10 @@ function Home() {
                                         {review.title}
                                     </Typography>
                                     <Typography variant="body2" align="center" style={{fontWeight: 'bold' }}>
-                                        Content: {review.media}
+                                        {review.media}
                                     </Typography>
                                     <Typography variant="body2" align="center" style={{ fontWeight: 'bold' }}>
-                                        User Rating: {review.rating}/10
+                                        {review.rating}/10
                                     </Typography>
                                 </Box>
                             </Box>
@@ -373,7 +373,8 @@ function Home() {
                                     />
                                 </CardContent>
                             </Collapse>
-                            <CardContent>
+                            <CardContent style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                                <Typography variant="body2" style={{fontWeight:'bold'}}>Show Review</Typography>
                                 <IconButton
                                     //index passed via map 
                                     onClick={() => handleExpandClick(index)} 
